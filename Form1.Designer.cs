@@ -79,7 +79,7 @@
             sendButton.Name = "sendButton";
             sendButton.Size = new Size(85, 32);
             sendButton.TabIndex = 3;
-            sendButton.Text = "Send";
+            sendButton.Text = "SEND";
             sendButton.UseVisualStyleBackColor = true;
             // 
             // Form1
