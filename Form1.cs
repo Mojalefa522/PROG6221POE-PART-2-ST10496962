@@ -6,32 +6,27 @@ namespace PROG6221POE_PART_2_ST10496962
     public partial class Form1 : Form
     {
         private ChatBot bot;
+        private bool waitingForName = true;
 
         public Form1()
         {
             InitializeComponent();
 
-            // Ask for name
-            string name = Microsoft.VisualBasic.Interaction.InputBox("Enter your name:", "Welcome to BotManta", "User");
-            if (string.IsNullOrWhiteSpace(name)) name = "User";
-            name = char.ToUpper(name[0]) + name.Substring(1).ToLower();
+            chatRichTextBox.AppendText("BotManta: Hello! Welcome to my school project." + Environment.NewLine);
+            chatRichTextBox.AppendText("BotManta: Please tell me your name first." + Environment.NewLine);
+            chatRichTextBox.AppendText(Environment.NewLine);
 
-            // Create chatbot
-            bot = new ChatBot(name);
-
-            // Welcome message with name
-            chatListBox.Items.Add($"BotManta: Hello {name}! Welcome to my school project.");
-            chatListBox.Items.Add($"BotManta: Please choose an option:");
-            chatListBox.Items.Add("");
-            chatListBox.Items.Add($"BotManta: 1 - Password Safety");
-            chatListBox.Items.Add($"BotManta: 2 - Phishing Tips");
-            chatListBox.Items.Add($"BotManta: 3 - Safe Browsing");
-            chatListBox.Items.Add($"BotManta: 4 - How are you?");
-            chatListBox.Items.Add($"BotManta: 0 - Exit");
-
-            // Connect send button
             sendButton.Click += sendButton_Click;
             this.AcceptButton = sendButton;
+        }
+
+        private string FormatName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return "User";
+
+            name = name.Trim().ToLower();
+            return char.ToUpper(name[0]) + name.Substring(1);
         }
 
         private void sendButton_Click(object sender, EventArgs e)
@@ -39,24 +34,32 @@ namespace PROG6221POE_PART_2_ST10496962
             string userMessage = inputTextBox.Text.Trim();
             if (userMessage == "") return;
 
-            chatListBox.Items.Add($"You: {userMessage}");
+            chatRichTextBox.AppendText($"You: {userMessage}" + Environment.NewLine);
             inputTextBox.Text = "";
 
-            string botReply = bot.GetResponse(userMessage);
-            chatListBox.Items.Add($"BotManta: {botReply}");
-            chatListBox.Items.Add("");
+            if (waitingForName)
+            {
+                string name = FormatName(userMessage);
+                bot = new ChatBot(name);
+                waitingForName = false;
 
-            chatListBox.TopIndex = chatListBox.Items.Count - 1;
-        }
+                chatRichTextBox.AppendText($"BotManta: Nice to meet you, {name}!" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: Please choose an option:" + Environment.NewLine);
+                chatRichTextBox.AppendText(Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 1 - Password Safety" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 2 - Phishing Tips" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 3 - Safe Browsing" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 4 - How are you?" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 0 - Exit" + Environment.NewLine);
+            }
+            else
+            {
+                string botReply = bot.GetResponse(userMessage);
+                chatRichTextBox.AppendText($"BotManta: {botReply}" + Environment.NewLine);
+                chatRichTextBox.AppendText(Environment.NewLine);
+            }
 
-        private void topPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void chatListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
+            chatRichTextBox.ScrollToCaret();
         }
     }
 }

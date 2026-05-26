@@ -17,7 +17,7 @@
         {
             topPanel = new Panel();
             titleLabel = new Label();
-            chatListBox = new ListBox();
+            chatRichTextBox = new RichTextBox();
             inputTextBox = new TextBox();
             sendButton = new Button();
             topPanel.SuspendLayout();
@@ -42,12 +42,16 @@
             titleLabel.Text = "BotManta";
             titleLabel.TextAlign = ContentAlignment.MiddleCenter;
 
-            // chatListBox
-            chatListBox.FormattingEnabled = true;
-            chatListBox.Location = new Point(10, 60);
-            chatListBox.Name = "chatListBox";
-            chatListBox.Size = new Size(415, 384);
-            chatListBox.TabIndex = 1;
+            // chatRichTextBox (replaces ListBox)
+            chatRichTextBox.Location = new Point(10, 60);
+            chatRichTextBox.Name = "chatRichTextBox";
+            chatRichTextBox.Size = new Size(410, 380);
+            chatRichTextBox.TabIndex = 1;
+            chatRichTextBox.ReadOnly = true;
+            chatRichTextBox.BackColor = Color.White;
+            chatRichTextBox.Font = new Font("Segoe UI", 10);
+            chatRichTextBox.WordWrap = true;
+            chatRichTextBox.Multiline = true;
 
             // inputTextBox
             inputTextBox.Location = new Point(10, 470);
@@ -69,7 +73,7 @@
             ClientSize = new Size(432, 553);
             Controls.Add(sendButton);
             Controls.Add(inputTextBox);
-            Controls.Add(chatListBox);
+            Controls.Add(chatRichTextBox);
             Controls.Add(topPanel);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
@@ -82,7 +86,7 @@
 
         private Panel topPanel;
         private Label titleLabel;
-        private ListBox chatListBox;
+        private RichTextBox chatRichTextBox;
         private TextBox inputTextBox;
         private Button sendButton;
     }
