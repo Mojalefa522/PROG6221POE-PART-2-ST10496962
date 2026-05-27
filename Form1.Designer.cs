@@ -24,52 +24,65 @@
             SuspendLayout();
 
             // topPanel
-            topPanel.BackColor = Color.Black;
+            topPanel.BackColor = Color.FromArgb(0, 20, 30);
             topPanel.Controls.Add(asciiLabel);
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
-            topPanel.Size = new Size(432, 55);
+            topPanel.Size = new Size(500, 50);
             topPanel.TabIndex = 0;
 
-            // asciiLabel (ASCII art in top panel)
+            // asciiLabel
             asciiLabel.AutoSize = false;
             asciiLabel.Dock = DockStyle.Fill;
-            asciiLabel.Font = new Font("Consolas", 7, FontStyle.Regular);
-            asciiLabel.ForeColor = Color.Cyan;
-            asciiLabel.BackColor = Color.Black;
-            asciiLabel.Text = "MANTA     CYBERSECURITY CHATBOT";
+            asciiLabel.Font = new Font("Consolas", 9, FontStyle.Bold);
+            asciiLabel.ForeColor = Color.FromArgb(0, 255, 200);
+            asciiLabel.BackColor = Color.FromArgb(0, 20, 30);
+            asciiLabel.Text = ">>> BOTMANTA - CYBERSECURITY CHATBOT <<<";
             asciiLabel.TextAlign = ContentAlignment.MiddleCenter;
 
             // chatRichTextBox
-            chatRichTextBox.Location = new Point(10, 65);
+            chatRichTextBox.BackColor = Color.FromArgb(20, 25, 35);
+            chatRichTextBox.ForeColor = Color.White;
+            chatRichTextBox.Font = new Font("Segoe UI", 10);
+            chatRichTextBox.Location = new Point(15, 65);
             chatRichTextBox.Name = "chatRichTextBox";
-            chatRichTextBox.Size = new Size(410, 380);
+            chatRichTextBox.Size = new Size(470, 400);
             chatRichTextBox.TabIndex = 1;
             chatRichTextBox.ReadOnly = true;
-            chatRichTextBox.BackColor = Color.White;
-            chatRichTextBox.Font = new Font("Segoe UI", 10);
             chatRichTextBox.WordWrap = true;
             chatRichTextBox.Multiline = true;
+            chatRichTextBox.BorderStyle = BorderStyle.FixedSingle;
 
             // inputTextBox
-            inputTextBox.Location = new Point(10, 470);
+            inputTextBox.BackColor = Color.FromArgb(30, 35, 45);
+            inputTextBox.ForeColor = Color.White;
+            inputTextBox.Font = new Font("Segoe UI", 10);
+            inputTextBox.Location = new Point(15, 480);
             inputTextBox.Name = "inputTextBox";
-            inputTextBox.Size = new Size(320, 27);
+            inputTextBox.Size = new Size(370, 27);
             inputTextBox.TabIndex = 2;
+            inputTextBox.BorderStyle = BorderStyle.FixedSingle;
+            inputTextBox.PlaceholderText = "Type your message here...";
 
             // sendButton
-            sendButton.Location = new Point(340, 468);
+            sendButton.BackColor = Color.FromArgb(0, 150, 200);
+            sendButton.ForeColor = Color.White;
+            sendButton.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            sendButton.Location = new Point(395, 478);
             sendButton.Name = "sendButton";
-            sendButton.Size = new Size(85, 32);
+            sendButton.Size = new Size(90, 32);
             sendButton.TabIndex = 3;
             sendButton.Text = "SEND";
-            sendButton.UseVisualStyleBackColor = true;
+            sendButton.FlatStyle = FlatStyle.Flat;
+            sendButton.FlatAppearance.BorderSize = 0;
+            sendButton.Cursor = Cursors.Hand;
 
             // Form1
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(432, 553);
+            BackColor = Color.FromArgb(15, 20, 30);
+            ClientSize = new Size(500, 530);
             Controls.Add(sendButton);
             Controls.Add(inputTextBox);
             Controls.Add(chatRichTextBox);
