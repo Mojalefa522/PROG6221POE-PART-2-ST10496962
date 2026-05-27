@@ -8,8 +8,9 @@ namespace PROG6221POE_PART_2_ST10496962
         private string userName;
         private Random random = new Random();
         private string lastTopic = "";
+        private Dictionary<string, string> userMemory = new Dictionary<string, string>();
 
-        public delegate string SentimentModifier(string response, string sentiment);
+        public delegate string SentimentModifier(string botResponse, string sentiment);
         public SentimentModifier ModifyBySentiment;
 
         public string LastSentiment { get; private set; } = "neutral";
@@ -18,6 +19,7 @@ namespace PROG6221POE_PART_2_ST10496962
         {
             userName = name;
             ModifyBySentiment = ApplySentimentAdjustment;
+            userMemory["name"] = name;
         }
 
         private string[] passwordTips = new string[]
@@ -33,7 +35,7 @@ namespace PROG6221POE_PART_2_ST10496962
         {
             "{0}, phishing scams try to trick you into revealing personal information.",
             "{0}, always check the sender's email address before clicking links.",
-            "{0}, hovering over links to see where they really go before clicking.",
+            "{0}, hover over links to see where they really go before clicking.",
             "{0}, never share personal info via email - legitimate companies won't ask for it.",
             "{0}, if an email creates urgency ('act now!'), it's likely a phishing scam."
         };
@@ -62,20 +64,65 @@ namespace PROG6221POE_PART_2_ST10496962
             "I'm still learning! Try typing a number from the menu: 1, 2, 3, 4, or 0."
         };
 
-        public string GetResponse(string input)
+        public string GetResponse(string userInput)
         {
-            string choice = NormalizeChoice(input);
-            LastSentiment = DetectSentiment(input);
-            string response = HandleChoice(choice);
-            return ApplySentiment(response);
+            string lowerInput = userInput.ToLower().Trim();
+
+            StoreUserInterest(lowerInput);
+
+            if (IsFollowUpRequest(lowerInput) && !string.IsNullOrEmpty(lastTopic))
+            {
+                string topicResponse = GetResponseForTopic(lastTopic);
+                LastSentiment = DetectSentiment(lowerInput);
+                return ApplySentiment(topicResponse);
+            }
+
+            string choice = NormalizeChoice(lowerInput);
+            LastSentiment = DetectSentiment(lowerInput);
+            string botReply = HandleChoice(choice);
+            return ApplySentiment(botReply);
+        }
+
+        private bool IsFollowUpRequest(string input)
+        {
+            string[] followKeywords = { "another tip", "tell me more", "explain more", "more about", "continue", "go on", "another one", "more tips" };
+            foreach (string keyword in followKeywords)
+            {
+                if (input.Contains(keyword))
+                    return true;
+            }
+            return false;
+        }
+
+        private string GetResponseForTopic(string topic)
+        {
+            if (topic == "password")
+                return GetRandomResponse(passwordTips);
+            else if (topic == "phishing")
+                return GetRandomResponse(phishingTips);
+            else if (topic == "safe browsing")
+                return GetRandomResponse(safeBrowsingTips);
+            else
+                return GetRandomResponse(defaultResponses);
+        }
+
+        private void StoreUserInterest(string input)
+        {
+            if (input.Contains("interested in") || input.Contains("i like") || input.Contains("my favorite"))
+            {
+                if (input.Contains("password"))
+                    userMemory["interest"] = "passwords";
+                else if (input.Contains("phishing"))
+                    userMemory["interest"] = "phishing";
+                else if (input.Contains("safe browsing"))
+                    userMemory["interest"] = "safe browsing";
+            }
         }
 
         private string NormalizeChoice(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return "";
-
-            input = input.Trim().ToLower();
 
             if (input == "1" || input.Contains("password"))
                 return "1";
@@ -109,6 +156,10 @@ namespace PROG6221POE_PART_2_ST10496962
                 case "0":
                     return $"Goodbye, {userName}! Stay safe online.";
                 default:
+                    if (userMemory.ContainsKey("interest"))
+                    {
+                        return $"{userName}, I remember you're interested in {userMemory["interest"]}. " + GetRandomResponse(defaultResponses);
+                    }
                     return GetRandomResponse(defaultResponses);
             }
         }
@@ -131,25 +182,25 @@ namespace PROG6221POE_PART_2_ST10496962
             return "neutral";
         }
 
-        private string ApplySentiment(string response)
+        private string ApplySentiment(string botResponse)
         {
             if (ModifyBySentiment != null)
-                return ModifyBySentiment(response, LastSentiment);
-            return response;
+                return ModifyBySentiment(botResponse, LastSentiment);
+            return botResponse;
         }
 
-        private string ApplySentimentAdjustment(string response, string sentiment)
+        private string ApplySentimentAdjustment(string botResponse, string sentiment)
         {
             switch (sentiment)
             {
                 case "worried":
-                    return $"Hey {userName}, don't stress too much. {response}";
+                    return $"Hey {userName}, don't stress too much. {botResponse}";
                 case "curious":
-                    return $"Good question! {response}";
+                    return $"Good question! {botResponse}";
                 case "frustrated":
-                    return $"Yeah I get it, this stuff can be annoying. {response}";
+                    return $"Yeah I get it, this stuff can be annoying. {botResponse}";
                 default:
-                    return response;
+                    return botResponse;
             }
         }
     }
