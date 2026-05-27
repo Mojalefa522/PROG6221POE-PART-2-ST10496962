@@ -16,7 +16,7 @@
         private void InitializeComponent()
         {
             topPanel = new Panel();
-            titleLabel = new Label();
+            asciiLabel = new Label();
             chatRichTextBox = new RichTextBox();
             inputTextBox = new TextBox();
             sendButton = new Button();
@@ -24,26 +24,25 @@
             SuspendLayout();
 
             // topPanel
-            topPanel.Controls.Add(titleLabel);
+            topPanel.BackColor = Color.Black;
+            topPanel.Controls.Add(asciiLabel);
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
-            topPanel.Size = new Size(432, 50);
+            topPanel.Size = new Size(432, 55);
             topPanel.TabIndex = 0;
 
-            // titleLabel
-            titleLabel.AutoSize = true;
-            titleLabel.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
-            titleLabel.ForeColor = Color.Green;
-            titleLabel.Location = new Point(128, 9);
-            titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(121, 31);
-            titleLabel.TabIndex = 0;
-            titleLabel.Text = "BotManta";
-            titleLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // asciiLabel (ASCII art in top panel)
+            asciiLabel.AutoSize = false;
+            asciiLabel.Dock = DockStyle.Fill;
+            asciiLabel.Font = new Font("Consolas", 7, FontStyle.Regular);
+            asciiLabel.ForeColor = Color.Cyan;
+            asciiLabel.BackColor = Color.Black;
+            asciiLabel.Text = "MANTA     CYBERSECURITY CHATBOT";
+            asciiLabel.TextAlign = ContentAlignment.MiddleCenter;
 
-            // chatRichTextBox (replaces ListBox)
-            chatRichTextBox.Location = new Point(10, 60);
+            // chatRichTextBox
+            chatRichTextBox.Location = new Point(10, 65);
             chatRichTextBox.Name = "chatRichTextBox";
             chatRichTextBox.Size = new Size(410, 380);
             chatRichTextBox.TabIndex = 1;
@@ -79,13 +78,12 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "BotManta";
             topPanel.ResumeLayout(false);
-            topPanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         private Panel topPanel;
-        private Label titleLabel;
+        private Label asciiLabel;
         private RichTextBox chatRichTextBox;
         private TextBox inputTextBox;
         private Button sendButton;

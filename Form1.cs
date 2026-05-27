@@ -12,7 +12,7 @@ namespace PROG6221POE_PART_2_ST10496962
         {
             InitializeComponent();
 
-            chatRichTextBox.AppendText("BotManta: Hello! Welcome to my school project." + Environment.NewLine);
+            chatRichTextBox.AppendText("BotManta: Hello! Welcome to Cybersecurity Chatbot Manta." + Environment.NewLine);
             chatRichTextBox.AppendText("BotManta: Please tell me your name first." + Environment.NewLine);
             chatRichTextBox.AppendText(Environment.NewLine);
 
