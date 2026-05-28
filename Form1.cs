@@ -1,4 +1,5 @@
 using System;
+using System.Media;
 using System.Windows.Forms;
 
 namespace PROG6221POE_PART_2_ST10496962
@@ -18,7 +19,20 @@ namespace PROG6221POE_PART_2_ST10496962
 
             sendButton.Click += sendButton_Click;
             this.AcceptButton = sendButton;
+
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "welcome.wav");
+                if (System.IO.File.Exists(path))
+                {
+                    System.Media.SoundPlayer player = new System.Media.SoundPlayer(path);
+                    player.Play();
+                }
+            }
+            catch { }
+
         }
+
 
         private string FormatName(string name)
         {
