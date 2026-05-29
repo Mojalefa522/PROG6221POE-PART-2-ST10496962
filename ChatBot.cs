@@ -108,14 +108,41 @@ namespace PROG6221POE_PART_2_ST10496962
 
         private void StoreUserInterest(string input)
         {
-            if (input.Contains("interested in") || input.Contains("i like") || input.Contains("my favorite"))
+            if (input.Contains("interested in") || input.Contains("i like") || input.Contains("my favorite") || input.Contains("tell me about"))
             {
-                if (input.Contains("password"))
+                if (input.Contains("password") || input.Contains("passphrase"))
                     userMemory["interest"] = "passwords";
-                else if (input.Contains("phishing"))
-                    userMemory["interest"] = "phishing";
-                else if (input.Contains("safe browsing"))
+                else if (input.Contains("phishing") || input.Contains("scam") || input.Contains("fake email"))
+                    userMemory["interest"] = "phishing protection";
+                else if (input.Contains("safe browsing") || input.Contains("https") || input.Contains("padlock"))
                     userMemory["interest"] = "safe browsing";
+                else if (input.Contains("virus") || input.Contains("malware"))
+                    userMemory["interest"] = "malware protection";
+                else if (input.Contains("hack") || input.Contains("hacker"))
+                    userMemory["interest"] = "hacker prevention";
+                else if (input.Contains("2fa") || input.Contains("two factor"))
+                    userMemory["interest"] = "two-factor authentication";
+                else if (input.Contains("vpn"))
+                    userMemory["interest"] = "VPNs and privacy";
+                else if (input.Contains("update") || input.Contains("patch"))
+                    userMemory["interest"] = "software updates";
+                else if (input.Contains("backup"))
+                    userMemory["interest"] = "data backups";
+                else
+                    userMemory["interest"] = "cybersecurity";
+            }
+
+            if (input.Contains("worried") || input.Contains("scared") || input.Contains("nervous"))
+            {
+                userMemory["mood"] = "worried";
+            }
+            else if (input.Contains("curious") || input.Contains("want to learn"))
+            {
+                userMemory["mood"] = "curious";
+            }
+            else if (input.Contains("frustrated") || input.Contains("annoyed"))
+            {
+                userMemory["mood"] = "frustrated";
             }
         }
 
@@ -158,7 +185,8 @@ namespace PROG6221POE_PART_2_ST10496962
                 default:
                     if (userMemory.ContainsKey("interest"))
                     {
-                        return $"{userName}, I remember you're interested in {userMemory["interest"]}. " + GetRandomResponse(defaultResponses);
+                        string interest = userMemory["interest"];
+                        return $"{userName}, I remember you're interested in {interest}. " + GetRandomResponse(defaultResponses);
                     }
                     return GetRandomResponse(defaultResponses);
             }

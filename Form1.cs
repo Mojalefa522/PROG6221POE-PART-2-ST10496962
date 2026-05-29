@@ -1,5 +1,4 @@
 using System;
-using System.Media;
 using System.Windows.Forms;
 
 namespace PROG6221POE_PART_2_ST10496962
@@ -13,6 +12,10 @@ namespace PROG6221POE_PART_2_ST10496962
         {
             InitializeComponent();
 
+            chatRichTextBox.Clear();
+            ShowAsciiArt();
+
+            chatRichTextBox.AppendText(Environment.NewLine);
             chatRichTextBox.AppendText("BotManta: Hello! Welcome to Cybersecurity Chatbot Manta." + Environment.NewLine);
             chatRichTextBox.AppendText("BotManta: Please tell me your name first." + Environment.NewLine);
             chatRichTextBox.AppendText(Environment.NewLine);
@@ -30,9 +33,26 @@ namespace PROG6221POE_PART_2_ST10496962
                 }
             }
             catch { }
-
         }
 
+        private void ShowAsciiArt()
+        {
+            chatRichTextBox.AppendText("================================================================" + Environment.NewLine);
+            chatRichTextBox.AppendText("||                                                            ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   |        \\ /      \\  /      \\ |       \\                  ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$$$$$$$|  $$$$$$\\|  $$$$$$\\| $$$$$$$\\                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$__    | $$___\\$$| $$   \\$$| $$__/ $$                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$  \\    \\$$    \\ | $$      | $$    $$                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$$$$    _\\$$$$$$\\| $$   __ | $$$$$$$\\                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$_____ |  \\__| $$| $$__/  \\| $$__/ $$                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||   | $$     \\ \\$$    $$ \\$$    $$| $$    $$                 ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||    \\$$$$$$$$  \\$$$$$$   \\$$$$$$  \\$$$$$$$                  ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||                                                            ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||                CYBERSECURITY CHATBOT SYSTEM                ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||                         BOTMANTA                           ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("||                                                            ||" + Environment.NewLine);
+            chatRichTextBox.AppendText("================================================================" + Environment.NewLine);
+        }
 
         private string FormatName(string name)
         {
@@ -56,6 +76,8 @@ namespace PROG6221POE_PART_2_ST10496962
                 string name = FormatName(userMessage);
                 bot = new ChatBot(name);
                 waitingForName = false;
+
+                chatRichTextBox.Clear();
 
                 chatRichTextBox.AppendText($"BotManta: Nice to meet you, {name}!" + Environment.NewLine);
                 chatRichTextBox.AppendText($"BotManta: Please choose an option:" + Environment.NewLine);
