@@ -93,16 +93,86 @@ namespace PROG6221POE_PART_2_ST10496962
                 chatRichTextBox.AppendText($"BotManta: 2 - Phishing Tips" + Environment.NewLine);
                 chatRichTextBox.AppendText($"BotManta: 3 - Safe Browsing" + Environment.NewLine);
                 chatRichTextBox.AppendText($"BotManta: 4 - How are you?" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 5 - Task Manager" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 6 - Play Quiz" + Environment.NewLine);
+                chatRichTextBox.AppendText($"BotManta: 7 - Show Activity Log" + Environment.NewLine);
                 chatRichTextBox.AppendText($"BotManta: 0 - Exit" + Environment.NewLine);
             }
             else
             {
-                string botReply = bot.GetResponse(userMessage);
+                string botReply = ProcessUserInput(userMessage);
                 chatRichTextBox.AppendText($"BotManta: {botReply}" + Environment.NewLine);
                 chatRichTextBox.AppendText(Environment.NewLine);
             }
 
             chatRichTextBox.ScrollToCaret();
+        }
+
+        private string ProcessUserInput(string userInput)
+        {
+            string lowerInput = userInput.ToLower().Trim();
+
+            // Check for new commands
+            if (lowerInput == "5" || lowerInput.Contains("task manager") || lowerInput.Contains("tasks"))
+            {
+                return HandleTaskManager();
+            }
+            else if (lowerInput == "6" || lowerInput.Contains("quiz") || lowerInput.Contains("game") || lowerInput.Contains("test"))
+            {
+                return HandleQuizCommand();
+            }
+            else if (lowerInput == "7" || lowerInput.Contains("activity log") || lowerInput.Contains("show log") || lowerInput.Contains("what have you done"))
+            {
+                return HandleActivityLog();
+            }
+
+            // Use existing ChatBot logic for everything else
+            return bot.GetResponse(userInput);
+        }
+
+        private string HandleTaskManager()
+        {
+            if (dbHelper == null) return "Database not available.";
+
+            var tasks = dbHelper.GetAllTasks();
+            if (tasks.Count == 0)
+            {
+                activityLog.LogAction("Task manager viewed", "No tasks found");
+                return "📭 You have no tasks yet. Type 'add task [description]' to create one!";
+            }
+
+            string result = "📋 YOUR TASKS:\n\n";
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                var task = tasks[i];
+                string status = task.Status == "completed" ? "✅" : "⬜";
+                string reminder = task.ReminderDate.HasValue ? $" (Reminder: {task.ReminderDate.Value:yyyy-MM-dd})" : "";
+                result += $"{i + 1}. {status} {task.Title}{reminder}\n   {task.Description}\n\n";
+            }
+
+            activityLog.LogAction("Task manager viewed", $"{tasks.Count} tasks displayed");
+            return result + "\n📝 Commands:\n- 'delete task X' - Delete task X\n- 'complete task X' - Mark task X as done";
+        }
+
+        private string HandleQuizCommand()
+        {
+            if (quizGame == null) return "Quiz not available.";
+
+            activityLog.LogAction("Quiz started", "User started cybersecurity quiz");
+            quizGame.StartQuiz();
+            activityLog.LogAction("Quiz completed", "User finished the quiz");
+
+            return "🎮 Quiz completed! Check your results!";
+        }
+
+        private string HandleActivityLog()
+        {
+            if (activityLog == null) return "Activity log not available.";
+
+            string log = activityLog.DisplayLog();
+            activityLog.LogAction("Activity log viewed", "User checked their activity history");
+
+            return log;
         }
     }
 }
