@@ -10,6 +10,8 @@ namespace PROG6221POE_PART_2_ST10496962
         private DatabaseHelper dbHelper;
         private ActivityLog activityLog;
         private QuizGame quizGame;
+        private string pendingTask = "";
+        private bool waitingForReminder = false;
 
         public Form1()
         {
@@ -112,8 +114,26 @@ namespace PROG6221POE_PART_2_ST10496962
         {
             string lowerInput = userInput.ToLower().Trim();
 
+            // Handle reminder confirmation
+            if (waitingForReminder)
+            {
+                return HandleReminderResponse(userInput);
+            }
+
             // Check for new commands
-            if (lowerInput == "5" || lowerInput.Contains("task manager") || lowerInput.Contains("tasks"))
+            if (lowerInput.Contains("add task") || lowerInput.Contains("new task"))
+            {
+                return HandleAddTask(userInput);
+            }
+            else if (lowerInput.Contains("delete task"))
+            {
+                return HandleDeleteTask(userInput);
+            }
+            else if (lowerInput.Contains("complete task"))
+            {
+                return HandleCompleteTask(userInput);
+            }
+            else if (lowerInput == "5" || lowerInput.Contains("task manager") || lowerInput.Contains("tasks"))
             {
                 return HandleTaskManager();
             }
@@ -138,20 +158,104 @@ namespace PROG6221POE_PART_2_ST10496962
             if (tasks.Count == 0)
             {
                 activityLog.LogAction("Task manager viewed", "No tasks found");
-                return "📭 You have no tasks yet. Type 'add task [description]' to create one!";
+                return "You have no tasks yet. Type 'add task [description]' to create one!";
             }
 
-            string result = "📋 YOUR TASKS:\n\n";
+            string result = "YOUR TASKS:\n\n";
             for (int i = 0; i < tasks.Count; i++)
             {
                 var task = tasks[i];
-                string status = task.Status == "completed" ? "✅" : "⬜";
+                string status = task.Status == "completed" ? "[COMPLETED]" : "[PENDING]";
                 string reminder = task.ReminderDate.HasValue ? $" (Reminder: {task.ReminderDate.Value:yyyy-MM-dd})" : "";
                 result += $"{i + 1}. {status} {task.Title}{reminder}\n   {task.Description}\n\n";
             }
 
             activityLog.LogAction("Task manager viewed", $"{tasks.Count} tasks displayed");
-            return result + "\n📝 Commands:\n- 'delete task X' - Delete task X\n- 'complete task X' - Mark task X as done";
+            return result + "\nCommands:\n- 'delete task X' - Delete task X\n- 'complete task X' - Mark task X as done";
+        }
+
+        private string HandleAddTask(string userInput)
+        {
+            string description = userInput.Replace("add task", "").Replace("new task", "").Trim();
+
+            if (string.IsNullOrEmpty(description))
+            {
+                return "What task would you like to add? Type 'add task [description]'";
+            }
+
+            pendingTask = description;
+            waitingForReminder = true;
+
+            activityLog.LogAction("Task pending", $"'{description}' - waiting for reminder");
+
+            return $"Task '{description}' added. Would you like to set a reminder? (yes/no)";
+        }
+
+        private string HandleReminderResponse(string userInput)
+        {
+            string lowerInput = userInput.ToLower().Trim();
+
+            if (lowerInput.Contains("yes") || lowerInput.Contains("sure") || lowerInput.Contains("ok"))
+            {
+                waitingForReminder = false;
+                DateTime reminderDate = DateTime.Now.AddDays(7);
+                dbHelper.AddTask(pendingTask, pendingTask, reminderDate);
+
+                activityLog.LogAction("Task added with reminder", $"'{pendingTask}' - reminder in 7 days");
+
+                return $"Reminder set for '{pendingTask}' on {reminderDate:yyyy-MM-dd}. I'll remind you!";
+            }
+            else if (lowerInput.Contains("no") || lowerInput.Contains("nope"))
+            {
+                waitingForReminder = false;
+                dbHelper.AddTask(pendingTask, pendingTask, null);
+
+                activityLog.LogAction("Task added without reminder", $"'{pendingTask}'");
+
+                return $"Task '{pendingTask}' added with no reminder.";
+            }
+            else
+            {
+                return "Please answer 'yes' or 'no' for setting a reminder.";
+            }
+        }
+
+        private string HandleDeleteTask(string userInput)
+        {
+            try
+            {
+                string[] parts = userInput.Split(' ');
+                if (parts.Length >= 3 && int.TryParse(parts[2], out int taskId))
+                {
+                    dbHelper.DeleteTask(taskId);
+                    activityLog.LogAction("Task deleted", $"Task ID: {taskId}");
+                    return $"Task {taskId} deleted successfully!";
+                }
+                return "Please specify the task number: 'delete task X'";
+            }
+            catch
+            {
+                return "Error deleting task. Please try again.";
+            }
+        }
+
+        private string HandleCompleteTask(string userInput)
+        {
+            try
+            {
+                string[] parts = userInput.Split(' ');
+                if (parts.Length >= 3 && int.TryParse(parts[2], out int taskId))
+                {
+                    dbHelper.MarkTaskCompleted(taskId);
+                    activityLog.LogAction("Task completed", $"Task ID: {taskId}");
+                    return $"Task {taskId} marked as completed! Great job!";
+                }
+                return "Please specify the task number: 'complete task X'";
+            }
+            catch
+            {
+                return "Error completing task. Please try again.";
+            }
         }
 
         private string HandleQuizCommand()
@@ -162,7 +266,7 @@ namespace PROG6221POE_PART_2_ST10496962
             quizGame.StartQuiz();
             activityLog.LogAction("Quiz completed", "User finished the quiz");
 
-            return "🎮 Quiz completed! Check your results!";
+            return "Quiz completed! Check your results!";
         }
 
         private string HandleActivityLog()
