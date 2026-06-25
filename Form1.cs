@@ -9,12 +9,14 @@ namespace PROG6221POE_PART_2_ST10496962
         private bool waitingForName = true;
         private DatabaseHelper dbHelper;
         private ActivityLog activityLog;
+        private QuizGame quizGame;
 
         public Form1()
         {
             InitializeComponent();
             dbHelper = new DatabaseHelper();
             activityLog = new ActivityLog();
+            quizGame = new QuizGame();
 
             chatRichTextBox.Clear();
             ShowAsciiArt();
