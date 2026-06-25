@@ -7,10 +7,12 @@ namespace PROG6221POE_PART_2_ST10496962
     {
         private ChatBot bot;
         private bool waitingForName = true;
+        private DatabaseHelper dbHelper;
 
         public Form1()
         {
             InitializeComponent();
+            dbHelper = new DatabaseHelper();
 
             chatRichTextBox.Clear();
             ShowAsciiArt();
