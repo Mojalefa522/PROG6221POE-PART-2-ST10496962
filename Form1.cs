@@ -8,11 +8,13 @@ namespace PROG6221POE_PART_2_ST10496962
         private ChatBot bot;
         private bool waitingForName = true;
         private DatabaseHelper dbHelper;
+        private ActivityLog activityLog;
 
         public Form1()
         {
             InitializeComponent();
             dbHelper = new DatabaseHelper();
+            activityLog = new ActivityLog();
 
             chatRichTextBox.Clear();
             ShowAsciiArt();
@@ -72,6 +74,7 @@ namespace PROG6221POE_PART_2_ST10496962
 
             chatRichTextBox.AppendText($"You: {userMessage}" + Environment.NewLine);
             inputTextBox.Text = "";
+            activityLog.LogAction("User input", userMessage);
 
             if (waitingForName)
             {
