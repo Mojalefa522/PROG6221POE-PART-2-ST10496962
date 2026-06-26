@@ -10,6 +10,7 @@ namespace PROG6221POE_PART_2_ST10496962
         private DatabaseHelper dbHelper;
         private ActivityLog activityLog;
         private QuizGame quizGame;
+        private NLPProcessor nlpProcessor;
         private string pendingTask = "";
         private bool waitingForReminder = false;
 
@@ -19,6 +20,7 @@ namespace PROG6221POE_PART_2_ST10496962
             dbHelper = new DatabaseHelper();
             activityLog = new ActivityLog();
             quizGame = new QuizGame();
+            nlpProcessor = new NLPProcessor();
 
             chatRichTextBox.Clear();
             ShowAsciiArt();
@@ -120,34 +122,49 @@ namespace PROG6221POE_PART_2_ST10496962
                 return HandleReminderResponse(userInput);
             }
 
-            // Check for new commands
-            if (lowerInput.Contains("add task") || lowerInput.Contains("new task"))
-            {
-                return HandleAddTask(userInput);
-            }
-            else if (lowerInput.Contains("delete task"))
-            {
-                return HandleDeleteTask(userInput);
-            }
-            else if (lowerInput.Contains("complete task"))
-            {
-                return HandleCompleteTask(userInput);
-            }
-            else if (lowerInput == "5" || lowerInput.Contains("task manager") || lowerInput.Contains("tasks"))
-            {
-                return HandleTaskManager();
-            }
-            else if (lowerInput == "6" || lowerInput.Contains("quiz") || lowerInput.Contains("game") || lowerInput.Contains("test"))
-            {
-                return HandleQuizCommand();
-            }
-            else if (lowerInput == "7" || lowerInput.Contains("activity log") || lowerInput.Contains("show log") || lowerInput.Contains("what have you done"))
-            {
-                return HandleActivityLog();
-            }
+            // Use NLP to detect intent
+            string intent = nlpProcessor.DetectIntent(userInput);
 
-            // Use existing ChatBot logic for everything else
-            return bot.GetResponse(userInput);
+            // Handle different intents
+            switch (intent)
+            {
+                case "add_task":
+                case "add_task_with_reminder":
+                    return HandleAddTask(userInput);
+
+                case "delete_task":
+                    return HandleDeleteTask(userInput);
+
+                case "complete_task":
+                    return HandleCompleteTask(userInput);
+
+                case "view_tasks":
+                    return HandleTaskManager();
+
+                case "quiz":
+                    return HandleQuizCommand();
+
+                case "activity_log":
+                    return HandleActivityLog();
+
+                default:
+                    // If no intent is detected then try to extract task from natural language
+                    if (lowerInput.Contains("remind me to") || lowerInput.Contains("remind me about"))
+                    {
+                        string description = nlpProcessor.ExtractTaskDescription(userInput);
+                        if (!string.IsNullOrEmpty(description))
+                        {
+                            // Create a task with reminder
+                            pendingTask = description;
+                            waitingForReminder = true;
+                            activityLog.LogAction("Task pending from NLP", $"'{description}' - waiting for reminder");
+                            return $"Task '{description}' added. Would you like to set a reminder? (yes/no)";
+                        }
+                    }
+
+                    // Fall back to existing ChatBot logic
+                    return bot.GetResponse(userInput);
+            }
         }
 
         private string HandleTaskManager()
