@@ -1,4 +1,4 @@
-# PROG6221POE PART 2 & 3 ST10496962
+# PROG6221POE ST10496962
 # BotManta - Cybersecurity Awareness Chatbot
 
 A comprehensive cybersecurity awareness chatbot built with C# and WinForms, featuring task management, interactive quiz, activity logging, and NLP simulation.
